@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AnonChat</title>
+  <style>
+    @font-face {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      src: url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+      /* Replace the URL with the appropriate link for your chosen font from Google Fonts or another font service */
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: #121212;
+      /* Dark background color */
+      color: #fff;
+      /* Light text color */
+      font-family: Arial, sans-serif;
+      /* Change font for better readability */
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+      z-index: 1000;
+      /* Set a higher z-index to make sure it's above other elements */
+    }
+
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    #chatContainer {
+      flex: 1;
+      overflow: scroll;
+      padding: 20px;
+      color: #fff;
+      padding-bottom: 60px;
+    }
+
+    .input-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      background-color: #222;
+      /* Darker background for input container */
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+
+
+    button {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+      outline: none;
+      transition: background-color 0.3s ease;
+      /* Smooth transition for button */
+    }
+
+    button:hover {
+      background-color: #0056b3;
+      /* Darker hover color for button */
+    }
+
+    a {
+      color: #007bff;
+      /* Link color */
+      text-decoration: none;
+      /* Remove underline */
+      transition: color 0.3s ease;
+      /* Smooth color transition */
+    }
+
+    a:hover {
+      color: #0056b3;
+      /* Darker color on hover */
+    }
+
+    textarea {
+      /* Adjust initial height */
+      font-family: 'Roboto', Arial, sans-serif;
+
+      flex: 1;
+      padding: 8px;
+      margin-right: 10px;
+      border-radius: 5px;
+      border: 1px solid #555;
+      /* Lighter border color */
+      outline: none;
+      background-color: #333;
+      /* Darker input background */
+      color: #fff;
+      /* Light text color */
+      transition: height 0.3s ease;
+      /* Add transition for smooth height change */
+      resize: none;
+      /* Prevent resizing from user drag */
+      min-height: 20px;
+      /* Set minimum height */
+      max-height: 100px;
+      /* Set maximum height */
+      overflow-y: auto;
+      /* Hide overflow */
+    }
+
+    .message {
+      margin-bottom: 10px;
+      max-width: 70%;
+      word-wrap: break-word;
+      background-color: #007bff;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .message-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    .message-label::after {
+      content: ':';
+    }
+
+    .message-content {
+      color: #fff;
+    }
+
+    textarea:hover,
+    textarea:focus {
+      border-color: #007bff;
+      /* Change border color on hover and focus */
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>AnonChat</h1>
+    <p>Welcome to AnonChat! <br> Currently I haven't implemented the usage of images, so for now, use <a
+        href="https://imgur.com/upload" target="_blank">imgur</a></p>
+  </header>
+  <main>
+    <div class="chat-container" id="chatContainer">
+      <!-- Messages will be dynamically added here -->
+    </div>
+  </main>
+  <footer>
+    <div class="input-container">
+      <textarea id="messageInput" placeholder="Type a message..."></textarea>
+      <button id="sendButton">Send</button>
+    </div>
+  </footer>
+
+  <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+    integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+    crossorigin="anonymous"></script>
+  <script>
+    const socket = io();
+    const messageInput = document.getElementById('messageInput');
+    const chatContainer = document.getElementById('chatContainer');
+    const sendButton = document.getElementById('sendButton');
+
+    // Automatically adjust textarea height based on content
+    messageInput.addEventListener('input', function () {
+      const lines = this.value.split('\n').length;
+      const lineHeight = 20; // Adjust this value according to your font size and line height
+
+      this.style.height = `${lineHeight * lines}px`; // Set the height based on the number of lines
+    });
+
+    messageInput.style.height = '20px';
+    function sendMessage() {
+      const message = messageInput.value.trim();
+
+      if (message !== '') {
+        socket.emit('message_sent', { message_text: message });
+        const messageContainer = document.createElement('div');
+
+        messageInput.value = '';
+        messageInput.style.height = '20px';
+      }
+    }
+    socket.on('message_received', function (data) {
+      const message = data.message_text;
+      appendMessage(message);
+    }
+    );
+
+    async function GetMessages() {
+      let data = await fetch("/get_messages");
+      const messages = await data.json();
+      return messages.messages
+
+    }
+    sendButton.addEventListener('click', sendMessage);
+
+    messageInput.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+    async function someFunction() {
+      let messages = await GetMessages()
+      for (let i = 0; i < messages.length; i++) {
+        let message = messages[i][1]
+        appendMessage(message);
+      }
+    }
+    function appendMessage(message) {
+      try { // might fail lol
+        if (message !== '') {
+          const messageContainer = document.createElement('div');
+          messageContainer.classList.add('message');
+
+          const messageLabel = document.createElement('p');
+          messageLabel.textContent = 'Anonymous';
+          messageLabel.classList.add('message-label');
+
+          const messageContent = document.createElement('p');
+          const messageLines = message.split('\n');
+          messageContent.innerHTML = messageLines.join('<br>');
+          messageContent.classList.add('message-content');
+
+          messageContainer.appendChild(messageLabel);
+          messageContainer.appendChild(messageContent);
+
+          chatContainer.appendChild(messageContainer);
+          chatContainer.scrollTo(0, chatContainer.scrollHeight)
+
+        }
+      }
+      catch (error) {
+        console.log(error)
+        return
+      }
+    }
+    someFunction();
+    var headerHeight = document.querySelector('header').offsetHeight;
+
+    document.querySelector('.chat-container').style.marginTop = headerHeight + 'px';
+
+  </script>
+</body>
+
+
+</html>
