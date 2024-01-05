@@ -71,7 +71,9 @@
       inset: 0;
       padding: 20px;
       color: #fff;
-      padding-bottom: 60px;
+      margin-bottom: 58px;
+      display: flex;
+      flex-direction: column;
     }
 
     .input-container {
@@ -132,31 +134,85 @@
     }
 
     .message {
-      margin-bottom: 10px;
-      max-width: 70%;
+      display: block;
+      flex-direction: column;
       word-wrap: break-word;
+      min-width: 10%;
+      width: max-content;
+      max-width: 70%;
       background-color: #007bff;
       padding: 10px;
       border-radius: 10px;
+      margin-bottom: 10px;
+      box-sizing: content-box;
+      /* Add this to include padding and border in the width calculation */
     }
 
+
+
     .message-label {
-      font-weight: bold;
-      margin-bottom: 5px;
+      font-size: large;
       color: #fff;
     }
 
     .message-label::after {
-      content: ':';
+      content: 'Anonymous:';
     }
 
     .message-content {
       color: #fff;
+      font-size: larger;
     }
 
     textarea:hover,
     textarea:focus {
       border-color: #007bff;
+    }
+
+    /* Webkit (Chrome, Safari) */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #555;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: #333;
+    }
+
+    /* Firefox */
+    body {
+      scrollbar-width: thin;
+    }
+
+    body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    body::-webkit-scrollbar-thumb {
+      background-color: #555;
+      border-radius: 4px;
+    }
+
+    body::-webkit-scrollbar-track {
+      background-color: #333;
+    }
+
+    /* IE and Edge */
+    body {
+      -ms-overflow-style: none;
+    }
+
+    body::-ms-scrollbar-thumb {
+      background-color: #555;
+      border-radius: 4px;
+    }
+
+    body::-ms-scrollbar-track {
+      background-color: #333;
     }
   </style>
 </head>
@@ -185,6 +241,12 @@
     integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
     crossorigin="anonymous"></script>
   <script>
+    const colorArray = ['#FF8300', '#7AFF00', '#FF007B'];
+
+    // Function to get a random color from the array
+    function getRandomColor() {
+      return colorArray[Math.floor(Math.random() * colorArray.length)];
+    }
     const socket = io();
     const messageInput = document.getElementById('messageInput');
     const chatContainer = document.getElementById('chatContainer');
@@ -243,9 +305,8 @@
           messageContainer.classList.add('message');
 
           const messageLabel = document.createElement('p');
-          messageLabel.textContent = 'Anonymous';
           messageLabel.classList.add('message-label');
-
+          messageLabel.style.color = getRandomColor();
           const messageContent = document.createElement('p');
           const messageLines = message.split('\n');
           messageContent.innerHTML = messageLines.join('<br>');
