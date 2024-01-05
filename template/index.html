@@ -12,25 +12,24 @@
       font-weight: 400;
       src: url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
     }
-    html::-webkit-scrollbar {
-      display: none;
+
+    html::-webkit-scrollbar {}
+
+    body {
+      -ms-overflow-style: none;
+      /* IE and Edge */
+      scrollbar-width: none;
+      /* Firefox */
     }
-    body{
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
-    }
+
     html,
     body {
       height: 100%;
       margin: 0;
       padding: 0;
-
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
       display: flex;
       flex-direction: column;
       background-color: #121212;
@@ -48,19 +47,28 @@
       text-align: center;
       padding: 20px 0;
       z-index: 1000;
+      flex-shrink: 0;
     }
 
 
     main {
-      flex: 1;
       display: flex;
       flex-direction: column;
+      flex: 1;
+    }
+
+    .chat-wrapper {
+      display: flex;
+      flex: 1 1 100%;
+      top: 0;
+      bottom: 0;
       position: relative;
     }
 
     #chatContainer {
-      flex: 1;
-      overflow: scroll;
+      overflow-y: auto;
+      position: absolute;
+      inset: 0;
       padding: 20px;
       color: #fff;
       padding-bottom: 60px;
@@ -160,11 +168,13 @@
         href="https://imgur.com/upload" target="_blank">imgur</a></p>
   </header>
   <main>
-    <div class="chat-container" id="chatContainer">
-      <!-- Messages will be dynamically added here -->
+    <div class="chat-wrapper">
+      <div class="chat-container" id="chatContainer">
+        <!-- Messages will be dynamically added here -->
+      </div>
     </div>
   </main>
-  <footer>
+  <footer style="flex-shrink: 0;">
     <div class="input-container">
       <textarea id="messageInput" placeholder="Type a message..."></textarea>
       <button id="sendButton">Send</button>
@@ -182,9 +192,9 @@
 
     messageInput.addEventListener('input', function () {
       const lines = this.value.split('\n').length;
-      const lineHeight = 20; 
+      const lineHeight = 20;
 
-      this.style.height = `${lineHeight * lines}px`; 
+      this.style.height = `${lineHeight * lines}px`;
     });
 
     messageInput.style.height = '20px';
@@ -245,7 +255,7 @@
           messageContainer.appendChild(messageContent);
 
           chatContainer.appendChild(messageContainer);
-          chatContainer.scrollTo(0, chatContainer.scrollHeight); //this aint working bruh
+          chatContainer.scrollTo(0, chatContainer.scrollHeight); 
 
         }
       }
