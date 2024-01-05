@@ -11,9 +11,14 @@
       font-style: normal;
       font-weight: 400;
       src: url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
-      /* Replace the URL with the appropriate link for your chosen font from Google Fonts or another font service */
     }
-
+    html::-webkit-scrollbar {
+      display: none;
+    }
+    body{
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
     html,
     body {
       height: 100%;
@@ -29,11 +34,8 @@
       display: flex;
       flex-direction: column;
       background-color: #121212;
-      /* Dark background color */
       color: #fff;
-      /* Light text color */
       font-family: Arial, sans-serif;
-      /* Change font for better readability */
     }
 
     header {
@@ -46,7 +48,6 @@
       text-align: center;
       padding: 20px 0;
       z-index: 1000;
-      /* Set a higher z-index to make sure it's above other elements */
     }
 
 
@@ -71,7 +72,6 @@
       justify-content: space-between;
       padding: 10px;
       background-color: #222;
-      /* Darker background for input container */
       position: fixed;
       bottom: 0;
       width: 100%;
@@ -89,30 +89,23 @@
       cursor: pointer;
       outline: none;
       transition: background-color 0.3s ease;
-      /* Smooth transition for button */
     }
 
     button:hover {
       background-color: #0056b3;
-      /* Darker hover color for button */
     }
 
     a {
       color: #007bff;
-      /* Link color */
       text-decoration: none;
-      /* Remove underline */
       transition: color 0.3s ease;
-      /* Smooth color transition */
     }
 
     a:hover {
       color: #0056b3;
-      /* Darker color on hover */
     }
 
     textarea {
-      /* Adjust initial height */
       font-family: 'Roboto', Arial, sans-serif;
 
       flex: 1;
@@ -120,22 +113,14 @@
       margin-right: 10px;
       border-radius: 5px;
       border: 1px solid #555;
-      /* Lighter border color */
       outline: none;
       background-color: #333;
-      /* Darker input background */
       color: #fff;
-      /* Light text color */
       transition: height 0.3s ease;
-      /* Add transition for smooth height change */
       resize: none;
-      /* Prevent resizing from user drag */
       min-height: 20px;
-      /* Set minimum height */
       max-height: 100px;
-      /* Set maximum height */
       overflow-y: auto;
-      /* Hide overflow */
     }
 
     .message {
@@ -164,7 +149,6 @@
     textarea:hover,
     textarea:focus {
       border-color: #007bff;
-      /* Change border color on hover and focus */
     }
   </style>
 </head>
@@ -196,12 +180,11 @@
     const chatContainer = document.getElementById('chatContainer');
     const sendButton = document.getElementById('sendButton');
 
-    // Automatically adjust textarea height based on content
     messageInput.addEventListener('input', function () {
       const lines = this.value.split('\n').length;
-      const lineHeight = 20; // Adjust this value according to your font size and line height
+      const lineHeight = 20; 
 
-      this.style.height = `${lineHeight * lines}px`; // Set the height based on the number of lines
+      this.style.height = `${lineHeight * lines}px`; 
     });
 
     messageInput.style.height = '20px';
@@ -244,7 +227,7 @@
       }
     }
     function appendMessage(message) {
-      try { // might fail lol
+      try { // might fail lol (i get null sometimes hehe)
         if (message !== '') {
           const messageContainer = document.createElement('div');
           messageContainer.classList.add('message');
@@ -262,7 +245,7 @@
           messageContainer.appendChild(messageContent);
 
           chatContainer.appendChild(messageContainer);
-          chatContainer.scrollTo(0, chatContainer.scrollHeight)
+          chatContainer.scrollTo(0, chatContainer.scrollHeight); //this aint working bruh
 
         }
       }
