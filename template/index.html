@@ -25,9 +25,12 @@
       scrollbar-width: none;
       /* Firefox */
     }
-
+    #chatContainer{
+      overflow-x:hidden;
+    }
     html,
     body {
+      
       height: 100%;
       margin: 0;
       padding: 0;
@@ -160,7 +163,7 @@
     }
 
     .message-label::after {
-      content: 'Anonymous:';
+      content: 'Anon:';
     }
 
     .message-content {
@@ -281,12 +284,17 @@
     }
     );
 
-    async function GetMessages() {
-      let data = await fetch("/get_messages");
-      const messages = await data.json();
-      return messages.messages
-
-    }
+async function GetMessages(offset) {
+  try {
+    offset = offset | 0;
+    let data = await fetch("/get_messages?offset=" + offset);
+    const messages = await data.json();
+    return messages.messages;
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    return []; // Return an empty array in case of an error
+  }
+}
     sendButton.addEventListener('click', sendMessage);
 
     messageInput.addEventListener('keydown', function (event) {
@@ -295,13 +303,18 @@
         sendMessage();
       }
     });
-    async function someFunction() {
-      let messages = await GetMessages()
-      for (let i = 0; i < messages.length; i++) {
-        let message = messages[i][1]
+    async function someFunction(offset) {
+      let messages = await GetMessages(offset)
+
+      const reversedMessages = [...messages].reverse();
+
+
+      for (let i = 0; i < reversedMessages.length; i++) {
+        let message = reversedMessages[i][1]
         appendMessage(message);
       }
     }
+    someFunction();
     function appendMessage(message) {
       try { // might fail lol (i get null sometimes hehe)
         if (message !== '') {
@@ -329,11 +342,69 @@
         return
       }
     }
-    someFunction();
+function prependMessage(message) {
+  try {//also might fail cause of null
+    if (message !== '') {
+      const messageContainer = document.createElement('div');
+      messageContainer.classList.add('message');
+
+      const messageLabel = document.createElement('p');
+      messageLabel.classList.add('message-label');
+      messageLabel.style.color = getRandomColor();
+      const messageContent = document.createElement('p');
+      const messageLines = message.split('\n');
+      messageContent.innerHTML = messageLines.join('<br>');
+      messageContent.classList.add('message-content');
+
+      messageContainer.appendChild(messageLabel);
+      messageContainer.appendChild(messageContent);
+
+      const scrollPosBefore = chatContainer.scrollTop;
+
+      if (chatContainer.prepend) {
+        chatContainer.prepend(messageContainer);
+      } else {
+        chatContainer.insertBefore(messageContainer, chatContainer.firstChild);
+      }
+
+      const scrollPosAfter = chatContainer.scrollTop;
+      const scrollDiff = scrollPosAfter - scrollPosBefore;
+
+      
+    }
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+}
     var headerHeight = document.querySelector('header').offsetHeight;
 
     document.querySelector('.chat-container').style.marginTop = headerHeight + 'px';
+    offset = 1;
+let savedScrollPos = 0;
 
+
+document.querySelector('.chat-container').addEventListener('scroll', async function () {
+  var chatContainer = this;
+
+  if (chatContainer.scrollTop === 0) {
+    try {
+      savedScrollPos = chatContainer.scrollHeight - chatContainer.scrollTop;
+
+      let msgs = await GetMessages(offset);
+
+      for (i = 0; i < msgs.length; i++) {
+        prependMessage(msgs[i][1]);
+      }
+
+      offset++;
+
+      chatContainer.scrollTop = chatContainer.scrollHeight - savedScrollPos;
+    } catch (error) {
+      prependMessage(error);
+    }
+  }
+});
   </script>
 </body>
 </html>
