@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_socketio import SocketIO, emit
+from flask_minify import Minify
 import sqlite3
 
 app = Flask(__name__, template_folder="template")
@@ -27,8 +28,8 @@ def create_table():
 
 
 create_table()
-
-
+minify = Minify()
+minify.init_app(app)
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -56,25 +57,30 @@ def handle_message(data):
 
 @app.route('/get_messages')
 def get_messages():
-    batch_size=10
+    batch_size = 10
     offset = request.args.get('offset', default=0, type=int)
+
     if offset < 0:
-        return jsonify({"error":"invalid request"}),404
+        return jsonify({"error": "invalid request"}), 404
+
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
     cursor.execute('''
-        SELECT * FROM ChatMessages 
-    ''')
+        SELECT * FROM ChatMessages
+        ORDER BY Timestamp DESC
+        LIMIT ? OFFSET ?
+    ''', (batch_size, offset * batch_size))
 
-    messages = cursor.fetchall()[::-1]
-    messages = split_array(messages,batch_size)
-    
+    messages = cursor.fetchall()
+
     conn.close()
+
     try:
-        return jsonify({"messages": messages[offset]})
+        return jsonify({"messages": messages})
     except Exception as e:
-        return jsonify({"error":e.args}),500
+        return jsonify({"error": e.args}), 500
+
 @app.route("/get_all_messages")
 def get_all_messages():
     conn = sqlite3.connect(DB_NAME)
@@ -109,4 +115,4 @@ def split_array(arr, chunk_size=50):
 
     return result
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=80, host="0.0.0.0")
+    socketio.run(app, debug=True, host="0.0.0.0",port=80)
