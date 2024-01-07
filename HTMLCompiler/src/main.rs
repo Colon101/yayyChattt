@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
+use std::path::Path;
 use std::{env, fs};
 fn get_file_type(file_name: &str) -> &str {
     let file_name_array: Vec<&str> = file_name.split('.').collect();
@@ -133,22 +134,26 @@ fn main() {
                     "<!-- JSPLACEHOLDER -->",
                     &format!("<script>{}</script>", js).as_str(),
                 );
-
-            let file_path = format!("{}/compiled.html", dir_path);
+            let compiled_file_name = "compiled.html";
+            let parent_dir = Path::new(&dir_path).parent().unwrap_or_else(|| {
+                eprintln!("Error getting parent directory for: {}", &dir_path);
+                std::process::exit(1);
+            });
+            let file_path = parent_dir.join(compiled_file_name);
 
             // Attempt to create a new file or truncate an existing file
             let mut file = match File::create(&file_path) {
                 Ok(file) => file,
                 Err(err) => {
-                    eprintln!("Error creating file {}: {}", &file_path, err);
+                    eprintln!("Error creating file {}: {}", &file_path.display(), err);
                     std::process::exit(1);
                 }
             };
 
             // Write the compiled HTML to the file
             match file.write_all(compiled_html.as_bytes()) {
-                Ok(_) => println!("File written successfully: {}", &file_path),
-                Err(err) => eprintln!("Error writing to file {}: {}", &file_path, err),
+                Ok(_) => println!("File written successfully: {}", &file_path.display()),
+                Err(err) => eprintln!("Error writing to file {}: {}", &file_path.display(), err),
             }
         }
         Err(err) => eprintln!("Error: {}", err),

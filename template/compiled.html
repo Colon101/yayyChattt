@@ -1,428 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
 <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
-  integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+    integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+    crossorigin="anonymous"></script>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AnonChat</title>
-  <style>
-    img {
-      display: none;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnonChat</title>
+    <style>img {
+  display: none;
+}
 
-    @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
-    body {
-      -ms-overflow-style: none;
-      /* IE and Edge */
-      scrollbar-width: none;
-      /* Firefox */
-    }
+body {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
 
-    #chatContainer {
-      overflow-x: hidden;
-    }
+#chatContainer {
+  overflow-x: hidden;
+}
 
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
-    body {
-      display: flex;
-      flex-direction: column;
-      background-color: #121212;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
+body {
+  display: flex;
+  flex-direction: column;
+  background-color: #121212;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
 
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: #333;
-      color: #fff;
-      text-align: center;
-      padding: 20px 0;
-      z-index: 1000;
-      flex-shrink: 0;
-    }
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+  z-index: 1000;
+  flex-shrink: 0;
+}
 
-    main {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
+main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
 
-    .chat-wrapper {
-      display: flex;
-      flex: 1 1 100%;
-      top: 0;
-      bottom: 0;
-      position: relative;
-    }
+.chat-wrapper {
+  display: flex;
+  flex: 1 1 100%;
+  top: 0;
+  bottom: 0;
+  position: relative;
+}
 
-    #chatContainer {
-      overflow-y: auto;
-      position: absolute;
-      inset: 0;
-      padding: 20px;
-      color: #fff;
-      margin-bottom: 58px;
-      display: flex;
-      flex-direction: column;
-    }
+#chatContainer {
+  overflow-y: auto;
+  position: absolute;
+  inset: 0;
+  padding: 20px;
+  color: #fff;
+  margin-bottom: 58px;
+  display: flex;
+  flex-direction: column;
+}
 
-    .input-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px;
-      background-color: #222;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      box-sizing: border-box;
-    }
+.input-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #222;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-    button {
-      padding: 8px 20px;
-      border: none;
-      border-radius: 5px;
-      background-color: #007bff;
-      color: #fff;
-      cursor: pointer;
-      outline: none;
-      transition: background-color 0.3s ease;
-    }
+button {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
 
-    button:hover {
-      background-color: #0056b3;
-    }
+button:hover {
+  background-color: #0056b3;
+}
 
-    #imgr {
-      color: #007bff;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
+#imgr {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
 
-    #imgr:hover {
-      color: #0056b3;
-    }
+#imgr:hover {
+  color: #0056b3;
+}
 
-    textarea {
-      font-family: "Roboto", Arial, sans-serif;
+textarea {
+  font-family: "Roboto", Arial, sans-serif;
 
-      flex: 1;
-      padding: 8px;
-      margin-right: 10px;
-      border-radius: 5px;
-      border: 1px solid #555;
-      outline: none;
-      background-color: #333;
-      color: #fff;
-      transition: height 0.3s ease;
-      resize: none;
-      min-height: 20px;
-      max-height: 100px;
-      overflow-y: auto;
-    }
+  flex: 1;
+  padding: 8px;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: 1px solid #555;
+  outline: none;
+  background-color: #333;
+  color: #fff;
+  transition: height 0.3s ease;
+  resize: none;
+  min-height: 20px;
+  max-height: 100px;
+  overflow-y: auto;
+}
 
-    .message {
-      display: block;
-      flex-direction: column;
-      word-wrap: break-word;
-      min-width: 10%;
-      width: max-content;
-      max-width: 70%;
-      background-color: #007bff;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      box-sizing: content-box;
-      /* Add this to include padding and border in the width calculation */
-    }
+.message {
+  display: block;
+  flex-direction: column;
+  word-wrap: break-word;
+  min-width: 10%;
+  width: max-content;
+  max-width: 70%;
+  background-color: #007bff;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-sizing: content-box;
+  /* Add this to include padding and border in the width calculation */
+}
 
-    .message-label {
-      font-size: large;
-      color: #fff;
-    }
+.message-label {
+  font-size: large;
+  color: #fff;
+}
 
-    .message-label::after {
-      content: "Anon:";
-    }
+.message-label::after {
+  content: "Anon:";
+}
 
-    .message-content {
-      color: #fff;
-      font-size: larger;
-    }
+.message-content {
+  color: #fff;
+  font-size: larger;
+}
 
-    textarea:hover,
-    textarea:focus {
-      border-color: #007bff;
-    }
+textarea:hover,
+textarea:focus {
+  border-color: #007bff;
+}
 
-    /* Webkit (Chrome, Safari) */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
+/* Webkit (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+}
 
-    ::-webkit-scrollbar-thumb {
-      background-color: #555;
-      border-radius: 4px;
-    }
+::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+}
 
-    ::-webkit-scrollbar-track {
-      background-color: #333;
-    }
+::-webkit-scrollbar-track {
+  background-color: #333;
+}
 
-    /* Firefox */
-    body {
-      scrollbar-width: thin;
-    }
+/* Firefox */
+body {
+  scrollbar-width: thin;
+}
 
-    body::-webkit-scrollbar {
-      width: 8px;
-    }
+body::-webkit-scrollbar {
+  width: 8px;
+}
 
-    body::-webkit-scrollbar-thumb {
-      background-color: #555;
-      border-radius: 4px;
-    }
+body::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+}
 
-    body::-webkit-scrollbar-track {
-      background-color: #333;
-    }
+body::-webkit-scrollbar-track {
+  background-color: #333;
+}
 
-    /* IE and Edge */
-    body {
-      -ms-overflow-style: none;
-    }
+/* IE and Edge */
+body {
+  -ms-overflow-style: none;
+}
 
-    body::-ms-scrollbar-thumb {
-      background-color: #555;
-      border-radius: 4px;
-    }
+body::-ms-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+}
 
-    body::-ms-scrollbar-track {
-      background-color: #333;
-    }
+body::-ms-scrollbar-track {
+  background-color: #333;
+}
 
-    .messagelink {
-      color: #fff;
-      text-decoration: underline;
-      font-weight: bold;
-    }
-  </style>
+.messagelink {
+  color: #fff;
+  text-decoration: underline;
+  font-weight: bold;
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <h1>AnonChat</h1>
-    <p>Welcome to AnonChat! <br> Currently I haven't implemented the usage of images, so for now, use <a
-        href="https://imgur.com/upload" target="_blank" id="imgr">imgur</a></p>
-  </header>
-  <main>
-    <div class="chat-wrapper">
-      <div class="chat-container" id="chatContainer">
-        <!-- Messages will be dynamically added here -->
-      </div>
-    </div>
-  </main>
-  <footer style="flex-shrink: 0;">
-    <div class="input-container">
-      <textarea id="messageInput" placeholder="Type a message..."></textarea>
-      <button id="sendButton">Send</button>
-    </div>
-  </footer>
+    <header>
+        <h1>AnonChat</h1>
+        <p>Welcome to AnonChat! <br> Currently I haven't implemented the usage of images, so for now, use <a
+                href="https://imgur.com/upload" target="_blank" id="imgr">imgur</a></p>
+    </header>
+    <main>
+        <div class="chat-wrapper">
+            <div class="chat-container" id="chatContainer">
+                <!-- Messages will be dynamically added here -->
+            </div>
+        </div>
+    </main>
+    <footer style="flex-shrink: 0;">
+        <div class="input-container">
+            <textarea id="messageInput" placeholder="Type a message..."></textarea>
+            <button id="sendButton">Send</button>
+        </div>
+    </footer>
 
 </body>
 <script>const colorArray = ["#FF8300", "#7AFF00", "#FF007B"];
 
-  // Function to get a random color from the array
-  function getRandomColor() {
-    return colorArray[Math.floor(Math.random() * colorArray.length)];
+// Function to get a random color from the array
+function getRandomColor() {
+  return colorArray[Math.floor(Math.random() * colorArray.length)];
+}
+const socket = io();
+const messageInput = document.getElementById("messageInput");
+const chatContainer = document.getElementById("chatContainer");
+const sendButton = document.getElementById("sendButton");
+
+messageInput.addEventListener("input", function () {
+  const lines = this.value.split("\n").length;
+  const lineHeight = 20;
+
+  this.style.height = `${lineHeight * lines}px`;
+});
+
+messageInput.style.height = "20px";
+function sendMessage() {
+  const message = messageInput.value.trim();
+
+  if (message !== "") {
+    socket.emit("message_sent", { message_text: message });
+    const messageContainer = document.createElement("div");
+
+    messageInput.value = "";
+    messageInput.style.height = "20px";
   }
-  const socket = io();
-  const messageInput = document.getElementById("messageInput");
-  const chatContainer = document.getElementById("chatContainer");
-  const sendButton = document.getElementById("sendButton");
+}
+socket.on("message_received", function (data) {
+  const message = data.message_text;
+  appendMessage(message);
+});
 
-  messageInput.addEventListener("input", function () {
-    const lines = this.value.split("\n").length;
-    const lineHeight = 20;
-
-    this.style.height = `${lineHeight * lines}px`;
-  });
-
-  messageInput.style.height = "20px";
-  function sendMessage() {
-    const message = messageInput.value.trim();
-
-    if (message !== "") {
-      socket.emit("message_sent", { message_text: message });
-      const messageContainer = document.createElement("div");
-
-      messageInput.value = "";
-      messageInput.style.height = "20px";
-    }
+async function GetMessages(offset) {
+  try {
+    offset = offset | 0;
+    let data = await fetch("/get_messages?offset=" + offset);
+    const messages = await data.json();
+    return messages.messages;
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    return []; // Return an empty array in case of an error
   }
-  socket.on("message_received", function (data) {
-    const message = data.message_text;
+}
+sendButton.addEventListener("click", sendMessage);
+
+messageInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+});
+async function someFunction(offset) {
+  let messages = await GetMessages(offset);
+
+  const reversedMessages = [...messages].reverse();
+
+  for (let i = 0; i < reversedMessages.length; i++) {
+    let message = reversedMessages[i][1];
     appendMessage(message);
-  });
-
-  async function GetMessages(offset) {
-    try {
-      offset = offset | 0;
-      let data = await fetch("/get_messages?offset=" + offset);
-      const messages = await data.json();
-      return messages.messages;
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      return []; // Return an empty array in case of an error
-    }
   }
-  sendButton.addEventListener("click", sendMessage);
+}
+someFunction();
+function constructMessage(message) {
+  try {
+    if (message !== "") {
+      const messageContainer = document.createElement("div");
+      messageContainer.classList.add("message");
 
-  messageInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      sendMessage();
-    }
-  });
-  async function someFunction(offset) {
-    let messages = await GetMessages(offset);
+      const messageLabel = document.createElement("p");
+      messageLabel.classList.add("message-label");
+      messageLabel.style.color = getRandomColor();
 
-    const reversedMessages = [...messages].reverse();
+      const messageContent = document.createElement("p");
+      const messageLines = message.split("\n");
 
-    for (let i = 0; i < reversedMessages.length; i++) {
-      let message = reversedMessages[i][1];
-      appendMessage(message);
-    }
-  }
-  someFunction();
-  function constructMessage(message) {
-    try {
-      if (message !== "") {
-        const messageContainer = document.createElement("div");
-        messageContainer.classList.add("message");
+      // Process each line separately
+      for (let i = 0; i < messageLines.length; i++) {
+        const line = messageLines[i];
+        const lineElement = document.createElement("span");
 
-        const messageLabel = document.createElement("p");
-        messageLabel.classList.add("message-label");
-        messageLabel.style.color = getRandomColor();
+        // Regular expression to match URLs in the line
+        const urlRegex = /(https?:\/\/\S+|\S+\.\S+)/g; // Updated regex
 
-        const messageContent = document.createElement("p");
-        const messageLines = message.split("\n");
+        let lastIndex = 0;
 
-        // Process each line separately
-        for (let i = 0; i < messageLines.length; i++) {
-          const line = messageLines[i];
-          const lineElement = document.createElement("span");
+        // Find and replace URLs with anchor tags
+        let match;
+        while ((match = urlRegex.exec(line)) !== null) {
+          const [url] = match;
+          const textBefore = line.substring(lastIndex, match.index);
+          lastIndex = match.index + url.length;
 
-          // Regular expression to match URLs in the line
-          const urlRegex = /(https?:\/\/\S+|\S+\.\S+)/g; // Updated regex
+          // Add text before the URL
+          lineElement.appendChild(document.createTextNode(textBefore));
 
-          let lastIndex = 0;
-
-          // Find and replace URLs with anchor tags
-          let match;
-          while ((match = urlRegex.exec(line)) !== null) {
-            const [url] = match;
-            const textBefore = line.substring(lastIndex, match.index);
-            lastIndex = match.index + url.length;
-
-            // Add text before the URL
-            lineElement.appendChild(document.createTextNode(textBefore));
-
-            // Add the link element
-            const linkElement = document.createElement("a");
-            linkElement.href = url.startsWith("http") ? url : "http://" + url; // Add 'http://' if not present
-            linkElement.textContent = url;
-            linkElement.target = "_blank";
-            linkElement.classList.add("messagelink");
-            lineElement.appendChild(linkElement);
-          }
-
-          // Add any remaining text after the last URL
-          lineElement.appendChild(
-            document.createTextNode(line.substring(lastIndex))
-          );
-
-          // Add <br> except for the last line
-          if (i < messageLines.length - 1) {
-            messageContent.appendChild(lineElement);
-            messageContent.appendChild(document.createElement("br"));
-          } else {
-            messageContent.appendChild(lineElement);
-          }
+          // Add the link element
+          const linkElement = document.createElement("a");
+          linkElement.href = url.startsWith("http") ? url : "http://" + url; // Add 'http://' if not present
+          linkElement.textContent = url;
+          linkElement.target = "_blank";
+          linkElement.classList.add("messagelink");
+          lineElement.appendChild(linkElement);
         }
 
-        messageContent.classList.add("message-content");
+        // Add any remaining text after the last URL
+        lineElement.appendChild(
+          document.createTextNode(line.substring(lastIndex))
+        );
 
-        messageContainer.appendChild(messageLabel);
-        messageContainer.appendChild(messageContent);
-
-        return messageContainer;
-      }
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  }
-
-  function appendMessage(message) {
-    const messageContainer = constructMessage(message);
-    if (messageContainer) {
-      chatContainer.appendChild(messageContainer);
-      chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    }
-  }
-
-  function prependMessage(message) {
-    const messageContainer = constructMessage(message);
-    if (messageContainer) {
-      if (chatContainer.prepend) {
-        chatContainer.prepend(messageContainer);
-      } else {
-        chatContainer.insertBefore(messageContainer, chatContainer.firstChild);
-      }
-    }
-  }
-  var headerHeight = document.querySelector("header").offsetHeight;
-
-  document.querySelector(".chat-container").style.marginTop = headerHeight + "px";
-  offset = 1;
-  let savedScrollPos = 0;
-
-  document
-    .querySelector(".chat-container")
-    .addEventListener("scroll", async function () {
-      var chatContainer = this;
-
-      if (chatContainer.scrollTop === 0) {
-        try {
-          savedScrollPos = chatContainer.scrollHeight - chatContainer.scrollTop;
-
-          let msgs = await GetMessages(offset);
-
-          for (i = 0; i < msgs.length; i++) {
-            prependMessage(msgs[i][1]);
-          }
-
-          offset++;
-
-          chatContainer.scrollTop = chatContainer.scrollHeight - savedScrollPos;
-        } catch (error) {
-          prependMessage(error);
+        // Add <br> except for the last line
+        if (i < messageLines.length - 1) {
+          messageContent.appendChild(lineElement);
+          messageContent.appendChild(document.createElement("br"));
+        } else {
+          messageContent.appendChild(lineElement);
         }
       }
-    });
+
+      messageContent.classList.add("message-content");
+
+      messageContainer.appendChild(messageLabel);
+      messageContainer.appendChild(messageContent);
+
+      return messageContainer;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+function appendMessage(message) {
+  const messageContainer = constructMessage(message);
+  if (messageContainer) {
+    chatContainer.appendChild(messageContainer);
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+  }
+}
+
+function prependMessage(message) {
+  const messageContainer = constructMessage(message);
+  if (messageContainer) {
+    if (chatContainer.prepend) {
+      chatContainer.prepend(messageContainer);
+    } else {
+      chatContainer.insertBefore(messageContainer, chatContainer.firstChild);
+    }
+  }
+}
+var headerHeight = document.querySelector("header").offsetHeight;
+
+document.querySelector(".chat-container").style.marginTop = headerHeight + "px";
+offset = 1;
+let savedScrollPos = 0;
+
+document
+  .querySelector(".chat-container")
+  .addEventListener("scroll", async function () {
+    var chatContainer = this;
+
+    if (chatContainer.scrollTop === 0) {
+      try {
+        savedScrollPos = chatContainer.scrollHeight - chatContainer.scrollTop;
+
+        let msgs = await GetMessages(offset);
+
+        for (i = 0; i < msgs.length; i++) {
+          prependMessage(msgs[i][1]);
+        }
+
+        offset++;
+
+        chatContainer.scrollTop = chatContainer.scrollHeight - savedScrollPos;
+      } catch (error) {
+        prependMessage(error);
+      }
+    }
+  });
 </script>
 
 </html>

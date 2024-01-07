@@ -32,7 +32,7 @@ minify = Minify()
 minify.init_app(app)
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('compiled.html')
 
 
 @socketio.on('message_sent')
