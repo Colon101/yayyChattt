@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, render_template
+from flask import Flask, request, jsonify, send_from_directory, render_template,send_file
 from flask_socketio import SocketIO, emit
 from flask_minify import Minify
 import sqlite3
@@ -26,10 +26,13 @@ def create_table():
     conn.commit()
     conn.close()
 
-
 create_table()
 minify = Minify()
 minify.init_app(app)
+@app.route('/spinner.gif')
+def spinner():
+    file_path = 'Spinner.gif'
+    return send_file(file_path, mimetype='image/gif')
 @app.route('/')
 def index():
     return render_template('compiled.html')

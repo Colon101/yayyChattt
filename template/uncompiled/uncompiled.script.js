@@ -143,39 +143,85 @@ function appendMessage(message) {
 function prependMessage(message) {
   const messageContainer = constructMessage(message);
   if (messageContainer) {
-    if (chatContainer.prepend) {
-      chatContainer.prepend(messageContainer);
+    const secondChild = chatContainer.children[1];
+
+    if (secondChild) {
+      chatContainer.insertBefore(messageContainer, secondChild);
     } else {
-      chatContainer.insertBefore(messageContainer, chatContainer.firstChild);
+      // If there is no second child, simply append the messageContainer
+      chatContainer.appendChild(messageContainer);
     }
   }
 }
+
 var headerHeight = document.querySelector("header").offsetHeight;
 
 document.querySelector(".chat-container").style.marginTop = headerHeight + "px";
 offset = 1;
 let savedScrollPos = 0;
+let isLoading = false;
 
 document
   .querySelector(".chat-container")
   .addEventListener("scroll", async function () {
     var chatContainer = this;
 
-    if (chatContainer.scrollTop === 0) {
+    if (chatContainer.scrollTop === 0 && !isLoading) {
       try {
+        // Set the loading flag to true
+        isLoading = true;
+
+        // Add a loading spinner (replace with your own loading UI)
+        showLoadingSpinner();
+
+        // Save the current scroll position
         savedScrollPos = chatContainer.scrollHeight - chatContainer.scrollTop;
 
+        // Fetch messages
         let msgs = await GetMessages(offset);
 
-        for (i = 0; i < msgs.length; i++) {
+        // Prepend messages to the chat
+        for (let i = 0; i < msgs.length; i++) {
           prependMessage(msgs[i][1]);
         }
 
+        // Increment the offset
         offset++;
 
+        // Set the scroll position to maintain the previous view
         chatContainer.scrollTop = chatContainer.scrollHeight - savedScrollPos;
       } catch (error) {
+        // Handle errors and prepend an error message
         prependMessage(error);
+      } finally {
+        // Reset the loading flag and hide the loading spinner
+        isLoading = false;
+        hideLoadingSpinner();
       }
     }
   });
+// function appendMessage(message) {
+//   const messageContainer = constructMessage(message);
+//   if (messageContainer) {
+//     chatContainer.appendChild(messageContainer);
+//     chatContainer.scrollTo(0, chatContainer.scrollHeight);
+//   }
+// }
+
+// function prependMessage(message) {
+//   const messageContainer = constructMessage(message);
+//   if (messageContainer) {
+//     if (chatContainer.prepend) {
+//       chatContainer.prepend(messageContainer);
+//     } else {
+//       chatContainer.insertBefore(messageContainer, chatContainer.firstChild);
+//     }
+//   }
+// }
+function consturctLoadingSpinner(src) {}
+function showLoadingSpinner() {
+  document.getElementById("spinner").style.display = "block";
+}
+function hideLoadingSpinner() {
+  document.getElementById("spinner").style.display = "none";
+}
