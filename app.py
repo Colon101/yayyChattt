@@ -80,7 +80,10 @@ def get_messages():
     conn.close()
 
     try:
-        return jsonify({"messages": messages})
+        if len(messages) > 0:
+            return jsonify({"messages": messages})
+        else:
+            return jsonify("EOF","EOF") ,404
     except Exception as e:
         return jsonify({"error": e.args}), 500
 
