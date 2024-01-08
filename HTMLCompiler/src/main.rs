@@ -128,11 +128,11 @@ fn main() {
             let compiled_html = html
                 .replace(
                     "<!-- CSSPLACEHOLDER -->",
-                    &format!("<style>{}</style>", css).as_str(),
+                    &format!("<style>\n{}\n</style>", css).as_str(),
                 )
                 .replace(
                     "<!-- JSPLACEHOLDER -->",
-                    &format!("<script>{}</script>", js).as_str(),
+                    &format!("<script>\n{}\n</script>", js).as_str(),
                 );
             let compiled_file_name = "compiled.html";
             let parent_dir = Path::new(&dir_path).parent().unwrap_or_else(|| {
