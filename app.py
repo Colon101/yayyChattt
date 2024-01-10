@@ -1,16 +1,21 @@
-from flask import Flask, request, jsonify, send_from_directory, render_template,send_file
+from flask import Flask, request, jsonify, send_from_directory, render_template, send_file, flash, redirect, url_for, Blueprint,session
+from datetime import timedelta
+
 from flask_socketio import SocketIO, emit
 from flask_minify import Minify
 import sqlite3
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 app = Flask(__name__, template_folder="template")
 app.config['SECRET_KEY'] = 'secret'
 socketio = SocketIO(app)
-
+ADMIN = os.environ.get("ADMIN")
+print(ADMIN)
 # SQLite database setup
 DB_NAME = "chat_database.db"
 
-
+admin_bp = Blueprint("admin",__name__ ,template_folder="template/admin",url_prefix="/admin")
 def create_table():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
@@ -29,15 +34,37 @@ def create_table():
 create_table()
 minify = Minify()
 minify.init_app(app)
+
+@admin_bp.route("/login", methods=["POST", "GET"])
+def admin_login_page():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if password == ADMIN and username == "admin":
+            flash('Login successful', 'success')
+            session['authenticated'] = True
+            return redirect(url_for('admin.admin_dashboard'))
+
+        flash('Invalid login credentials', 'error')
+    if session.get("authenticated"):
+        return redirect(url_for('admin.admin_dashboard'))
+    return render_template("login.html")
+
+@admin_bp.route("/")
+def admin_dashboard():
+    if session.get('authenticated'):
+        # You can add any logic you need for the admin dashboard
+        return f'Welcome Admin'
+    else:
+        flash('You need to log in first', 'error')
+        return redirect(url_for('admin.admin_login_page'))
 @app.route('/spinner.gif')
 def spinner():
     file_path = 'Spinner.gif'
     return send_file(file_path, mimetype='image/gif')
 @app.route('/')
 def index():
-    return render_template('compiled.html')
-
-
+    return render_template('index.html')
 @socketio.on('message_sent')
 def handle_message(data):
     # Remove leading and trailing spaces
@@ -120,5 +147,7 @@ def split_array(arr, chunk_size=50):
         result.append(arr[-last_chunk_size:])
 
     return result
+app.register_blueprint(admin_bp)
+app.permanent_session_lifetime = timedelta(seconds=10)
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0",port=80)

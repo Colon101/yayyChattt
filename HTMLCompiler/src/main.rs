@@ -86,21 +86,18 @@ fn verify_files(files: HashMap<String, String>) -> Result<Vec<(String, String)>,
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() < 2 {
-        eprintln!("Usage: <directory_path>");
+    if args.len() < 3 {
+        eprintln!("Usage: <directory_path> <file_name>.html");
         return;
     }
 
     let dir_path = &args[1];
+    let file_name = &args[2];
     let files = get_file_types_and_content(&dir_path);
     let verified_files = verify_files(files.clone()); // Returns a result if okay its hashmap of string,string
 
     match verified_files {
         Ok(files) => {
-            for (key, value) in files.iter() {
-                println!("Key: {}, Value: {}", key, value);
-            }
-
             let html = match files.iter().find(|(key, _)| key == "html") {
                 Some((_, value)) => value,
                 None => {
@@ -134,7 +131,7 @@ fn main() {
                     "<!-- JSPLACEHOLDER -->",
                     &format!("<script>\n{}\n</script>", js).as_str(),
                 );
-            let compiled_file_name = "compiled.html";
+            let compiled_file_name = format!("{}.html", file_name);
             let parent_dir = Path::new(&dir_path).parent().unwrap_or_else(|| {
                 eprintln!("Error getting parent directory for: {}", &dir_path);
                 std::process::exit(1);
