@@ -64,14 +64,11 @@ body {
   position: absolute;
   top: 50%;
   right: 5px;
-  transform: translateY(-50%);
+  transform: translateY(-75%) scale(2);
+
   cursor: pointer;
   background: none;
   border: none;
   outline: none;
-}
-
-#show_password {
-  content: "👁"; /* Unicode character for an eyeball */
-  font-size: 20px;
+  color: black;
 }

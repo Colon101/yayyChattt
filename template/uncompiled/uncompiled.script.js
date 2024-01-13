@@ -103,7 +103,7 @@ function constructMessage(message) {
 
           // Add the link element
           const linkElement = document.createElement("a");
-          linkElement.href = url.startsWith("http") ? url : "http://" + url; // Add 'http://' if not present
+          linkElement.href = url.startsWith("http") ? url : "https://" + url; // Add 'https://' if not present
           linkElement.textContent = url;
           linkElement.target = "_blank";
           linkElement.classList.add("messagelink");
@@ -177,11 +177,11 @@ document
           // Set the loading flag to true
           isLoading = true;
 
-          // Add a loading spinner (replace with your own loading UI)
-          showLoadingSpinner();
-
           // Save the current scroll position
           savedScrollPos = chatContainer.scrollHeight - chatContainer.scrollTop;
+
+          // Add a loading spinner (replace with your own loading UI)
+          showLoadingSpinner();
 
           // Fetch messages
           let msgs = await GetMessages(offset);
@@ -221,3 +221,7 @@ function hideLoadingSpinner() {
   document.getElementById("spinner").style.display = "none";
   chatContainer.scrollTop = chatContainer.scrollHeight - savedScrollPos;
 }
+socket.on("chatCleared", function () {
+  document.querySelector(".chat-container").innerHTML =
+    '<div><img src="spinner.gif" alt="" width="100px" style="margin:auto; display:none;" id="spinner"></div>';
+});

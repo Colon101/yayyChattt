@@ -67,16 +67,13 @@ body {
   position: absolute;
   top: 50%;
   right: 5px;
-  transform: translateY(-50%);
+  transform: translateY(-75%) scale(2);
+
   cursor: pointer;
   background: none;
   border: none;
   outline: none;
-}
-
-#show_password {
-  content: "👁"; /* Unicode character for an eyeball */
-  font-size: 20px;
+  color: black;
 }
 
 </style>
@@ -96,10 +93,10 @@ body {
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 
+            <label for="password">Password:</label>
             <div class="password-container">
-                <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
-                <button type="button" id="show_password" onclick="togglePassword()"></button>
+                <button type="button" id="show_password" onclick="togglePassword()">👁</button>
             </div>
 
             {% with messages = get_flashed_messages() %}

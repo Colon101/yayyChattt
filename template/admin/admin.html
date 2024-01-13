@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnonChat - Admin</title>
+</head>
+
+<body>
+    <h1>Welcome Kfir</h1>
+    <button onclick="clearChat()">Clear Chat</button>
+    <button onclick="logOut()">log out</button>
+    <script>
+        function clearChat() {
+            fetch("clear_chat")
+        }
+        function logOut() {
+            fetch("log_out")
+            window.location.href = "login"
+        }
+    </script>
+</body>
+
+</html>

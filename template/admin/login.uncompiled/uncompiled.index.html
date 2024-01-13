@@ -17,10 +17,10 @@
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 
+            <label for="password">Password:</label>
             <div class="password-container">
-                <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
-                <button type="button" id="show_password" onclick="togglePassword()"></button>
+                <button type="button" id="show_password" onclick="togglePassword()">👁</button>
             </div>
 
             {% with messages = get_flashed_messages() %}
