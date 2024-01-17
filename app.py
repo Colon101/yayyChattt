@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify, send_from_directory, render_template, send_file, flash, redirect, url_for, Blueprint,session,abort,Response
+import time
+from flask import Flask, make_response, request, jsonify, send_from_directory, render_template, send_file, flash, redirect, url_for, Blueprint,session,abort,Response
 from datetime import timedelta
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -40,7 +41,6 @@ def create_table():
 create_table()
 minify = Minify()
 minify.init_app(app)
-
 @admin_bp.route("/login", methods=["POST", "GET"])
 def admin_login_page():
     if request.method == 'POST':
@@ -53,7 +53,9 @@ def admin_login_page():
             return redirect(url_for('admin.admin_dashboard'))
         else:
             session["was_flashed"] = True
+
             flash('Invalid login credentials', 'error')
+
             return render_template("login.html")
     
     if session.get("authenticated"):
@@ -84,18 +86,35 @@ def admin_dashboard():
         # You can add any logic you need for the admin dashboard
         return render_template("admin.html")
     else:
-        flash('You need to log in first', 'error')
+        if session.get('logging_out') == False:
+            flash('You need to log in first', 'error')
+        session['logging_out'] = False
         return redirect(url_for('admin.admin_login_page'))
 @app.route('/spinner.gif')
 def spinner():
     file_path = 'Spinner.gif'
-    return send_file(file_path, mimetype='image/gif')
-@app.route('/')
+
+    # Check if the file exists
+    if not os.path.isfile(file_path):
+        return "File not found", 404
+
+    # Get the file modification time for caching purposes
+    file_mtime = os.path.getmtime(file_path)
+
+    # Set cache control headers
+    response = make_response(send_file(file_path, mimetype='image/gif'))
+    response.headers['Cache-Control'] = 'public, max-age=31536000'  # Cache for 1 year (adjust as needed)
+    response.headers['Last-Modified'] = time.strftime('%a, %d %b %Y %H:%M:%S GMT', time.gmtime(file_mtime))
+
+    return response
+
+@app.route('/',methods=["GET"])
 def index():
     return render_template('index.html')
 @admin_bp.route("log_out")
 def logout():
     session['authenticated'] = False
+    session['logging_out'] = True
     session.pop('_flashes',None)
     flash("logged out successfully","error")
     return Response(status=200)
@@ -181,7 +200,9 @@ def split_array(arr, chunk_size=50):
         result.append(arr[-last_chunk_size:])
 
     return result
-
+@app.route("/googleda02a14363e5ccd8.html")
+def a():
+    return "google-site-verification: googleda02a14363e5ccd8.html" ,200
 app.register_blueprint(admin_bp)
 app.permanent_session_lifetime = timedelta(hours=1)
 if __name__ == '__main__':

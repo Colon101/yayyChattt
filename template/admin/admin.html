@@ -2,22 +2,191 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name=description content="Wsg kfir aint no way for any bots to find this but hey idc LUL">
     <title>AnonChat - Admin</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: rgb(2, 0, 36);
+            background: linear-gradient(344deg,
+                    rgba(2, 0, 36, 1) 0%,
+                    rgba(0, 212, 255, 1) 0%,
+                    rgba(166, 169, 227, 1) 100%) no-repeat center center fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        h1 {
+            font-size: 4em;
+            text-align: center;
+            z-index: 5;
+        }
+
+        @media screen and (max-width: 700px) {
+            h1 {
+                font-size: 13vw;
+                text-align: center;
+                z-index: 5;
+            }
+
+        }
+
+
+        .button {
+            color: white;
+            background-color: #222;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            line-height: 2rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
+            cursor: pointer;
+            text-align: center;
+            margin-right: 0.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            width: 300px;
+        }
+
+        .button:hover {
+            background-color: #333;
+        }
+
+        .button svg {
+            display: inline;
+            width: 1.3rem;
+            height: 1.3rem;
+            margin-right: 0.75rem;
+            color: white;
+
+        }
+
+        .button:focus svg {
+            animation: spin_357 0.5s ease-in-out;
+        }
+
+        @keyframes spin_357 {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .logout {
+            --black: #000000;
+            --ch-black: #141414;
+            --eer-black: #1b1b1b;
+            --night-rider: #2e2e2e;
+            --white: #ffffff;
+            --af-white: #f3f3f3;
+            --ch-white: #e1e1e1;
+            width: 300px;
+            height: 45px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition-duration: 0.3s;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+            background-color: var(--af-white);
+        }
+
+        .logout:hover {
+            background-color: rgb(255, 65, 65);
+        }
+
+        /* plus sign */
+        .sign {
+            width: 100%;
+            transition-duration: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+        .sign svg {
+            width: 17px;
+        }
+
+        .sign svg path {
+            fill: var(--night-rider);
+        }
+
+        /* text */
+        .text {
+            color: var(--night-rider);
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        * {
+            overflow: hidden;
+        }
+
+        /* hover effect on button width */
+    </style>
 </head>
 
 <body>
-    <h1>Welcome Kfir</h1>
-    <button onclick="clearChat()">Clear Chat</button>
-    <button onclick="logOut()">log out</button>
+    <h1>Welcome Back, <br> Kfir!</h1>
+    <div class="buttons-container">
+        <button type="button" class="button" onclick="clearChat()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                <path
+                    d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z">
+                </path>
+                <path fill-rule="evenodd"
+                    d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z">
+                </path>
+            </svg>
+            Clear Chat
+        </button>
+
+        <button class="logout" onclick="logOut()">
+            <div class="sign">
+                <svg viewBox="0 0 512 512">
+                    <path
+                        d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z">
+                    </path>
+                </svg>
+            </div>
+
+            <div class="text">Logout</div>
+        </button>
+    </div>
+
     <script>
         function clearChat() {
-            fetch("clear_chat")
+            fetch("clear_chat");
         }
         function logOut() {
-            fetch("log_out")
-            window.location.href = "login"
+            fetch("log_out");
+            window.location.href = "login";
+            window.location.href = "login";
+            window.location.href = "login";
         }
     </script>
 </body>
